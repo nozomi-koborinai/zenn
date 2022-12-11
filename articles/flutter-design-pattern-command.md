@@ -4,7 +4,7 @@ emoji: "🕹️"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["Flutter", "Dart", "デザインパターン", "command"]
 published: true # true：公開記事、false：非公開記事
-published_at: 2022-12-23
+published_at: 2022-12-22
 ---
 本記事はFlutter大学アドベントカレンダー22日目の記事です。
 https://qiita.com/advent-calendar/2022/flutteruniv
