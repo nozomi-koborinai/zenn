@@ -403,6 +403,7 @@ class ChangeIconCommand implements Command {
 お疲れ様でした！
 ![](/images/command_sample_update.gif =450x)
 
+https://github.com/nozomi-koborinai/flutter_sandbox/tree/main/lib/samples/command_design_pattern
 
 # FlutterでCommandパターンを実装してみての感想
 今回の記事で初めてGoFデザインパターンのCommandをFlutterで実装しました。
