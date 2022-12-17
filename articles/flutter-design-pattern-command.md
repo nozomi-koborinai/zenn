@@ -115,7 +115,7 @@ class ChangeColorCommand implements Command {
 :::message
 本記事では詳しくは説明しませんが、
 具象が抽象に依存することを`依存関係逆転の原則`といいます。
-この原則を活用することで一般的によいとされている`疎結合なプログラム`を設計することができます。
+この原則を活用することで一般的によいとされている`疎結合なプログラム`を設計することができ、機能追加、テストを簡易的に書くことができるようになります。
 :::
 
 ### Receiver
@@ -139,18 +139,13 @@ class Shape {
 ### Invoker, Client
 #### Invoker
 Client(画面)上の操作をトリガーとしてCommand処理を呼び出します。
-今回は以下のようにViewの中にInvoker用のメソッドを定義しています。
+Clientから直接呼ばれるメソッドだと思っていただければイメージしやすいかと思います。
 #### Client
 Commandの生成(インスタンス化)、Receiverの設定、画面上の操作によってInvokerを呼び出します。
 ```dart:command_example_page.dart
-/// Commandサンプルアプリページ
-class CommandExamplePage extends StatefulWidget {
-  const CommandExamplePage({super.key});
+一部抜粋
 
-  @override
-  _CommandExamplePageState createState() => _CommandExamplePageState();
-}
-
+/// Commandを利用する側がClientとなるので、_CommandExamplePageStateがClientになるイメージ
 class _CommandExamplePageState extends State<CommandExamplePage> {
   // undoを実現するためのCommand履歴
   final CommandHistory _commandHistory = CommandHistory();
@@ -161,22 +156,6 @@ class _CommandExamplePageState extends State<CommandExamplePage> {
   void _changeColor() {
     // CommandのReceiverとして_shapeを渡す
     final command = ChangeColorCommand(_shape);
-    // 実行したコマンドをコマンド履歴に追加
-    _executeCommand(command);
-  }
-
-  /// Invoker(高さ変更ボタン押下時に呼ばれるメソッド)
-  void _changeHeight() {
-    // CommandのReceiverとして_shapeを渡す
-    final command = ChangeHeightCommand(_shape);
-    // 実行したコマンドをコマンド履歴に追加
-    _executeCommand(command);
-  }
-
-  /// Invoker(幅変更ボタン押下時に呼ばれるメソッド)
-  void _changeWidth() {
-    // CommandのReceiverとして_shapeを渡す
-    final command = ChangeWidthCommand(_shape);
     // 実行したコマンドをコマンド履歴に追加
     _executeCommand(command);
   }
@@ -233,16 +212,6 @@ class _CommandExamplePageState extends State<CommandExamplePage> {
               onPressed: _changeColor,
               child: const Text('Change color command'),
             ),
-            const SizedBox(height: 5),
-            ElevatedButton(
-              onPressed: _changeHeight,
-              child: const Text('Change height command'),
-            ),
-            const SizedBox(height: 5),
-            ElevatedButton(
-              onPressed: _changeWidth,
-              child: const Text('Change width command'),
-            ),
             const Divider(),
             ElevatedButton(
               onPressed: _undo,
@@ -292,11 +261,9 @@ class CommandHistory {
 ## 新たに機能を追加してみる
 現時点でのサンプルアプリの機能は
 - 色変更
-- 高さ変更
-- 幅変更
 
-の3種類となっており、それぞれの操作がCommandとして定義されています。
-これらに対してさらに`アイコン変更`Commandを追加してみることにします。
+のみの操作となっており、この操作がCommandとして定義されています。
+これに対してさらに`アイコン変更`Commandを追加してみることにします。
 
 :::details Shapeオブジェクトに新規プロパティの追加
 アイコンを変更したいので、まずはShapeオブジェクトにiconプロパティを新たに定義します。
@@ -372,17 +339,6 @@ class ChangeIconCommand implements Command {
               onPressed: _changeColor,
               child: const Text('Change color command'),
             ),
-            const SizedBox(height: 5),
-            ElevatedButton(
-              onPressed: _changeHeight,
-              child: const Text('Change height command'),
-            ),
-            const SizedBox(height: 5),
-            ElevatedButton(
-              onPressed: _changeWidth,
-              child: const Text('Change width command'),
-            ),
-
             // 追加 ここから
             const SizedBox(height: 5),
             ElevatedButton(
