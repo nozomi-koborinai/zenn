@@ -359,7 +359,7 @@ class ChangeIconCommand implements Command {
 お疲れ様でした！
 ![](/images/command_sample_update.gif =450x)
 
-# 今回のサンプルアプリの全ソースはこちら
+### 本サンプルの全ソースはこちら
 https://github.com/nozomi-koborinai/flutter_sandbox/tree/main/lib/samples/command_design_pattern
 
 # FlutterでCommandパターンを実装してみての感想
