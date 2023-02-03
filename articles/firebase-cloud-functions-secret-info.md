@@ -60,3 +60,6 @@ export const onCreateCommand = functions
 :::
 上記メソッドを Firebase Cloud Functions にデプロイ後、動作させてみると、Secret Managerに保存したキー情報が取得できていることが確認できました。
 ![](/images/secret_manager_key_value.png)
+# 参考
+https://firebase.google.com/docs/functions/config-env#managing_secrets
+https://shiodaifuku.io/articles/2f33aba0-ede6-42e8-88a7-eca7b32d9caa
