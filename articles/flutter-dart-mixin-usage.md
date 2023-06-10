@@ -289,7 +289,7 @@ class HomePage extends ConsumerWidget with PageMixin {
 - PageMixin を with 句 で実装する
 - ボタンタップ時のイベントハンドラーとして PageMixin の `execute` を呼び出す
   - この時に、`PageMixin.execute` のような呼び出しは不要、
-    `execute` だけで Mixin 内のメソッドを呼び出すことができる
+    `execute` だけで Mixin 内のメソッドとして呼び出すことができる
 
 ## さいごに（単純な継承（extends）や utility クラスでもよいのでは？）
 
