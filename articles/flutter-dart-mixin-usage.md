@@ -6,7 +6,7 @@ topics: ["flutter", "dart", "mixin"]
 published: true
 ---
 
-こんにちは、[cobo](https://linktr.ee/nozomi_koborinai) です。
+こんにちは cobo です。
 今回は、`Flutter における Dart の Mixin を気持ちよく使ってみる` というテーマで本記事を執筆させていただきます。
 なお、Mixin のベストプラクティスを紹介する記事ではないため、その点ご了承ください。
 
