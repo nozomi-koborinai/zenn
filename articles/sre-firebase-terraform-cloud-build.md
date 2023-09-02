@@ -21,15 +21,9 @@ published: true
 ### 説明しないこと
 
 - 複数環境（development, staging, production）に対応した管理方法
-  :::message
-  本記事の応用版となるため、別記事にて紹介させていただきます。
-  :::
+  ※ 本記事の応用版となるため、別記事にて紹介させていただきます。
 - Terraform の使用方法
-  :::message
-  Terraform の基本的な使い方 および Firebase プロジェクトを管理する方法に関しては、私が執筆した別記事
-  **[Terraform で Firebase プロジェクトを構築してみる](https://zenn.dev/cloud_ace/articles/b791cce386d523)**
-  を参照してください。
-  :::
+  ※ Terraform の基本的な使い方 および Firebase プロジェクトを管理する方法に関しては、私が過去に執筆した [Terraform で Firebase プロジェクトを構築してみる](https://zenn.dev/cloud_ace/articles/b791cce386d523) を参照してください。
 
 ## トイルの撲滅
 
