@@ -3,7 +3,7 @@ title: "SRE 視点で捉える Firebase の Terraform 自動化: Cloud Build 実
 emoji: "🔧"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["googlecloud", "gcp", "cloudbuild", "firebase", "terraform"]
-published: false
+published: true
 ---
 
 ## はじめに
