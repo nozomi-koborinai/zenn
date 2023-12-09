@@ -3,7 +3,7 @@ title: "Snyk を使って Google Cloud の IaC 環境をセキュアに管理し
 emoji: "🐺"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["snyk", "googlecloud", "gcp", "iac", "security"]
-published: false
+published: true
 ---
 
 本記事は `Snyk を使ってコードをセキュアにした記事を投稿しよう！ by Snyk Advent Calendar 2023` 9 日目の記事です。
