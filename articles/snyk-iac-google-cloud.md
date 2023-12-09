@@ -2,7 +2,7 @@
 title: "Snyk を使って Google Cloud の IaC 環境をセキュアに管理してみる"
 emoji: "🐺"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["snyk", "googlecloud", "gcp", "iac", "security"]
+topics: ["snyk", "googlecloud", "gcp", "iac", "terraform"]
 published: true
 ---
 
