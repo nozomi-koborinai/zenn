@@ -24,8 +24,8 @@ Snyk の話に入る前に、一旦 Terraform のリソース状態の管理方�
 
 ### Terraform リソースの状態管理
 
-- .tf ファイルでリソースをコード化
-- .tfstate ファイルでリソースの状態を保持
+- `.tf` ファイルでリソースをコード化
+- `.tfstate` ファイルでリソースの状態を保持
 - `terraform plan` or `terraform apply` 実行時のリソース差分検出で、`.tf` ファイルと `.tfstate` ファイル を比較している
 
 ![tf-state-image](/images/snyk-iac-google-cloud/tf_state_image.png)
@@ -44,7 +44,7 @@ _リソース状態管理のイメージ_
 
 ## やりたいこと
 
-Snyk IaC によって .tfstate ファイル および 実際の Google Cloud プロジェクト環境を比較して、IaC 管理内／管理外のリソースチェックを行う
+Snyk IaC によって .tfstate ファイル と 実際の Google Cloud プロジェクト環境を比較して、IaC 管理内／管理外のリソースチェックを行う
 
 ## Snyk IaC
 
@@ -176,7 +176,7 @@ Terraform コードや以降で説明する Snyk IaC スキャンを実行する
 ├── cloudbuild          # Cloud Build から参照されるフォルダ
 │   └── snyk.yaml       # Snyk IaC Scan の実行設定を定義する yaml
 ├── locals.tf           # .tf ファイルで共通で使用する定数群
-├── log_write.sh        # Snyk IaC Scan 結果を Cloud Logging に書き出すシェル
+├── log_write.sh        # Snyk IaC Scan 結果を Cloud Logging に書き出すシェルスクリプト
 ├── provider.tf         # Terraform プロバイダーの設定を定義する tf
 ├── scheduler.tf        # スケジューラーの設定を定義する tf
 ├── service_account.tf  # サービスアカウントや関連する IAM 設定を定義する tf
@@ -325,7 +325,7 @@ terraform {
 Cloud Build から参照されて実際に Snyk IaC スキャンが実行される yaml を定義します。
 さらに、Snyk IaC スキャン結果を Cloud Logging に書き込むようにしています。
 
-:::details 補足：Cloud Logging 書き込み用のシェル
+:::details 補足：Cloud Logging 書き込み用のシェルスクリプト
 
 ```sh:log_wite.sh
 # 引数が指定されているか確認
@@ -401,7 +401,6 @@ timeout: "43200s"
 
 上記で Cloud Scheduler に設定した時間になったタイミングで Cloud Build のトリガーが発火します。
 トリガーが発火すると Cloud Build 経由で Snyk IaC スキャンが実行される仕組みになっています。
-※ Logging の確認上、0:00 まで待てなかったので今回に限り Cloud Scheduler を強制的に実行しています。
 
 ![building](/images/snyk-iac-google-cloud/building.png)
 _Cloud Build トリガー発火時_
@@ -412,6 +411,10 @@ Cloud Build 成功後、Cloud Logging を確認しに行くと、Snyk IaC スキ
 _自動 Snyk Iac スキャン結果_
 
 :::message
+Cloud Logging 確認の関係上、0:00 まで待てなかったので、今回に限り Cloud Scheduler を強制的に実行して、Cloud Build トリガーを発火させています。
+:::
+
+:::message alert
 Snyk IaC スキャンによるリソース差分検出に関して、検出対象外のリソースも存在するため注意が必要です。
 詳細は、[Google resources](https://docs.snyk.io/scan-using-snyk/scan-infrastructure/iac+-code-to-cloud-capabilities/detect-drift-and-manually-created-resources/supported-resources/google-resources) を参照してください。
 :::
