@@ -3,7 +3,7 @@ title: "Flutter × Firebase におけるモダンなアプリケーションア�
 emoji: "🚀"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["googlecloud", "gcp", "firebase", "flutter", "snyk"]
-published: true
+published: false
 ---
 
 本記事は Flutter 大学アドベントカレンダー 7 日目の記事です。
