@@ -6,58 +6,75 @@ topics: ["Flutter", "Dart", "デザインパターン", "command"]
 published: true # true：公開記事、false：非公開記事
 published_at: 2022-12-22
 ---
-本記事はFlutter大学アドベントカレンダー22日目の記事です。
-https://qiita.com/advent-calendar/2022/flutteruniv
-はじめましてcoboといいます。
-私はソフトウェアの設計を学ぶことに興味があるため、今回はGoFデザインパターンの中からCommandパターンを紹介させていただきます。
 
-# 本記事のゴール
-- Commandパターンが理解できる
-- Commandパターンを実装してサンプルアプリを作成することができる
+本記事は Flutter 大学アドベントカレンダー 22 日目の記事です。
+@[card](https://qiita.com/advent-calendar/2022/flutteruniv)
+はじめまして cobo といいます。
+私はソフトウェアの設計を学ぶことに興味があるため、今回は GoF デザインパターンの中から Command パターンを紹介させていただきます。
 
-## 説明すること／しないこと
-### すること
+## 本記事のゴール
+
+- Command パターンが理解できる
+- Command パターンを実装してサンプルアプリを作成することができる
+
+### 説明すること／しないこと
+
+#### すること
+
 - デザインパターンの概要
-- Commandパターンの概要
-- Commandパターンの実装方法
-### しないこと
+- Command パターンの概要
+- Command パターンの実装方法
+
+#### しないこと
+
 - デザインパターンの種類とそれらの説明
-- 状態管理の方法(Stateless, Stateful, Riverpodなど)
-※本記事ではStatefulWidgetで実装を行います。
+- 状態管理の方法(Stateless, Stateful, Riverpod など)
+  ※本記事では StatefulWidget で実装を行います。
 
 それでは本題に入っていきます。
 
-# Commandパターンとは?
+## Command パターンとは?
+
 処理の呼び出し（命令）と、処理の内容を分離するデザインパターンのことです。
-## そもそもデザインパターンとは？
+
+### そもそもデザインパターンとは？
+
 過去のソフトウェア設計者が発見し編み出した設計ノウハウを蓄積し、名前をつけ、再利用しやすいように特定の規約に従ってカタログ化したものです。
 ソフトウェア開発における`設計カタログ`だと思っていただければイメージがつきやすいかと思います。
-今回説明するCommandパターンは数多くある設計カタログ中の1種類ということになります。
+今回説明する Command パターンは数多くある設計カタログ中の 1 種類ということになります。
 
-# 実装
-今回はCommandパターンを実装して下記サンプルアプリを作成していきます。
-## 要件
+## 実装
+
+今回は Command パターンを実装して下記サンプルアプリを作成していきます。
+
+### 要件
+
 - 画面上のボックスに対して変更を加えることができる
-  - Change color commandボタン押下によって、ボックスの色をランダムに変更できる
+  - Change color command ボタン押下によって、ボックスの色をランダムに変更できる
 - 加えた変更を元に戻すことができる
-  - Undoボタン押下によって、ボックスを１つ前の状態に戻すことができる
-![](/images/command_sample.gif =450x)
+  - Undo ボタン押下によって、ボックスを１つ前の状態に戻すことができる
+    ![](/images/command_sample.gif =450x)
 
-## Commandパターンの概要
-Commandデザインパターンを扱うときの一般的なプログラムの構成を以下に示します。
+### Command パターンの概要
+
+Command デザインパターンを扱うときの一般的なプログラムの構成を以下に示します。
 ![](/images/command_pattern_class1.png =550x)
-### それぞれのクラスの役割
-| クラス | 役割 |
-| ---- | ---- |
-| Command<interface> | 操作を実行するためのインタフェースを宣言 |
-| Command | Command<interface>の具象 |
-| Receiver | Commandの受取手、Command処理の対象 |
-| Invoker | 画面上の操作をトリガーとしてCommand処理を実行 |
-| Client | Commandの生成 及び Receiverの設定 |
-| CommandHistory | 実行したCommandの履歴管理 |
 
-### Command<interface>
+#### それぞれのクラスの役割
+
+| クラス             | 役割                                            |
+| ------------------ | ----------------------------------------------- |
+| Command<interface> | 操作を実行するためのインタフェースを宣言        |
+| Command            | Command<interface> の具象                       |
+| Receiver           | Command の受取手、Command 処理の対象            |
+| Invoker            | 画面上の操作をトリガーとして Command 処理を実行 |
+| Client             | Command の生成 及び Receiver の設定             |
+| CommandHistory     | 実行した Command の履歴管理                     |
+
+#### Command<interface>
+
 インタフェースとして、抽象的なコマンドを定義します。
+
 ```dart:command.dart
 /// コマンドを抽象的に定義
 abstract class Command {
@@ -72,9 +89,11 @@ abstract class Command {
 }
 ```
 
-### Command
-抽象として定義したCommandを具象として定義します。
-Commandインタフェースを実装するところがポイントです。
+#### Command
+
+抽象として定義した Command を具象として定義します。
+Command インタフェースを実装するところがポイントです。
+
 ```dart:change_color_command.dart
 /// 色変更コマンド
 ///
@@ -119,15 +138,18 @@ class ChangeColorCommand implements Command {
   }
 }
 ```
+
 :::message
 本記事では詳しくは説明しませんが、
 具象が抽象に依存することを`依存関係逆転の原則`といいます。
 この原則を活用することで一般的によいとされている`疎結合なプログラム`を設計することができ、機能追加、テストを簡易的に書くことができるようになります。
 :::
 
-### Receiver
-Command処理の対象となるオブジェクトを定義します。
-上記CommandクラスのコンストラクタにReceiver（Shape）を渡すことで、Receiverに対して様々な変更を加えることが可能になります。
+#### Receiver
+
+Command 処理の対象となるオブジェクトを定義します。
+上記 Command クラスのコンストラクタに Receiver（Shape）を渡すことで、Receiver に対して様々な変更を加えることが可能になります。
+
 ```dart:shape.dart
 /// Commandの受取手、Command処理の対象オブジェクト
 class Shape {
@@ -143,12 +165,17 @@ class Shape {
 }
 ```
 
-### Invoker, Client
-#### Invoker
-Client(画面)上の操作をトリガーとしてCommand処理を呼び出します。
-Clientから直接呼ばれるメソッドだと思っていただければイメージしやすいかと思います。
-#### Client
-Commandの生成(インスタンス化)、Receiverの設定、画面上の操作によってInvokerを呼び出します。
+#### Invoker, Client
+
+##### Invoker
+
+Client(画面)上の操作をトリガーとして Command 処理を呼び出します。
+Client から直接呼ばれるメソッドだと思っていただければイメージしやすいかと思います。
+
+##### Client
+
+Command の生成(インスタンス化)、Receiver の設定、画面上の操作によって Invoker を呼び出します。
+
 ```dart:command_example_page.dart
 一部抜粋
 
@@ -236,9 +263,11 @@ class _CommandExamplePageState extends State<CommandExamplePage> {
 }
 ```
 
-### CommandHistory
-実行したCommandを履歴管理するためのオブジェクトを定義します。
-これにより、undo/redoなどの機能が実現可能となります。
+#### CommandHistory
+
+実行した Command を履歴管理するためのオブジェクトを定義します。
+これにより、undo/redo などの機能が実現可能となります。
+
 ```dart:command_history.dart
 /// 実行したCommandを履歴管理するためのオブジェクト
 class CommandHistory {
@@ -265,15 +294,18 @@ class CommandHistory {
 }
 ```
 
-## 新たに機能を追加してみる
+### 新たに機能を追加してみる
+
 現時点でのサンプルアプリの機能は
+
 - 色変更
 
-のみの操作となっており、この操作がCommandとして定義されています。
-これに対してさらに`アイコン変更`Commandを追加してみることにします。
+のみの操作となっており、この操作が Command として定義されています。
+これに対してさらに`アイコン変更`Command を追加してみることにします。
 
-:::details Shapeオブジェクトに新規プロパティの追加
-アイコンを変更したいので、まずはShapeオブジェクトにiconプロパティを新たに定義します。
+:::details Shape オブジェクトに新規プロパティの追加
+アイコンを変更したいので、まずは Shape オブジェクトに icon プロパティを新たに定義します。
+
 ```dart:shape.dart
 /// Commandの受取手、Command処理の対象オブジェクト
 class Shape {
@@ -290,10 +322,12 @@ class Shape {
   }
 }
 ```
+
 :::
 
-:::details アイコン変更Commandを新規追加
-色変更コマンド同様にCommandインタフェースを実装したアイコン変更コマンドを新たに定義します。
+:::details アイコン変更 Command を新規追加
+色変更コマンド同様に Command インタフェースを実装したアイコン変更コマンドを新たに定義します。
+
 ```dart:change_icon_command.dart
 /// アイコン変更コマンド
 class ChangeIconCommand implements Command {
@@ -322,10 +356,12 @@ class ChangeIconCommand implements Command {
   }
 }
 ```
+
 :::
 
-:::details アイコン変更CommandInvokerを新規追加
-こちらも色変更コマンドのInvokerと同様に新たにアイコン変更CommandInvokerを定義します。
+:::details アイコン変更 CommandInvoker を新規追加
+こちらも色変更コマンドの Invoker と同様に新たにアイコン変更 CommandInvoker を定義します。
+
 ```dart:command_example_page.dart
 一部抜粋
   /// Invoker(アイコン変更ボタン押下時に呼ばれるメソッド)
@@ -336,10 +372,12 @@ class ChangeIconCommand implements Command {
     _executeCommand(command);
   }
 ```
+
 :::
 
-:::details 画面のアイコン変更ボタンによりInvokerを呼び出す
+:::details 画面のアイコン変更ボタンにより Invoker を呼び出す
 ユーザの新規操作としてアイコン変更を実現するために、新たにアイコン変更ボタンを定義します。
+
 ```dart:command_example_page.dart
 一部抜粋
             ElevatedButton(
@@ -359,22 +397,26 @@ class ChangeIconCommand implements Command {
               child: const Text('Undo'),
             ),
 ```
+
 :::
 
-### 完成！！
+#### 完成
+
 これで色変更コマンド & アイコン変更コマンドを実装したサンプルアプリが出来上がりました。
 お疲れ様でした！
 ![](/images/command_sample_update.gif =450x)
 
-## 本サンプルの全ソースはこちら
-https://github.com/nozomi-koborinai/flutter_sandbox/tree/main/lib/samples/command_design_pattern
+### 本サンプルの全ソースはこちら
 
-# FlutterでCommandパターンを実装してみての感想
-今回の記事で初めてGoFデザインパターンのCommandパターンをFlutterで実装しました。
-ユーザ操作をCommandとして定義することで、
+@[card](https://github.com/nozomi-koborinai/flutter_sandbox/tree/main/lib/samples/command_design_pattern)
+
+## Flutter で Command パターンを実装してみての感想
+
+今回の記事で初めて GoF デザインパターンの Command パターンを Flutter で実装しました。
+ユーザ操作を Command として定義することで、
 
 - 操作履歴を管理することが容易になる
-- 新たなユーザ操作を新規Commandとして定義することで、既存処理の影響少なくしたままコードを書くことができる
+- 新たなユーザ操作を新規 Command として定義することで、既存処理の影響少なくしたままコードを書くことができる
 
 といった点が魅力的で、コードを書いていてとても楽しかったです。
 
@@ -382,7 +424,8 @@ https://github.com/nozomi-koborinai/flutter_sandbox/tree/main/lib/samples/comman
 その点が興味深いところだなと感じでいます。
 今後も定期的にデザインパターンを学習、紹介していきたいと思いました。
 
-# 参考
-https://kazlauskas.dev/flutter-design-patterns-12-command/
-https://www.hanachiru-blog.com/entry/2021/03/15/120000
-https://shiraberu.tech/2021/11/26/command-pattern/
+## 参考
+
+@[card](https://kazlauskas.dev/flutter-design-patterns-12-command/)
+@[card](https://www.hanachiru-blog.com/entry/2021/03/15/120000)
+@[card](https://shiraberu.tech/2021/11/26/command-pattern/)
