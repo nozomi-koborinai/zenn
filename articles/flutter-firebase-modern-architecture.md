@@ -3,7 +3,7 @@ title: "Flutter × Firebase におけるモダンなアプリケーションア�
 emoji: "🚀"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["googlecloud", "gcp", "firebase", "flutter", "snyk"]
-published: false
+published: true
 ---
 
 本記事は Flutter 大学アドベントカレンダー 7 日目の記事です。
@@ -35,7 +35,7 @@ published: false
 
 Flutter × Firebase アプリ開発におけるアプリケーション全体としてのアーキテクチャ（以下、アプリケーションアーキテクチャ）を下記に示します。
 
-![firebase-architecture](/images//flutter-firebase-modern-architecture/firebase-architecture.png =200x200)
+![firebase-architecture](/images/flutter-firebase-modern-architecture/firebase-architecture.png)
 _現在開発中の Flutter アプリにおけるアーキテクチャの全体像_
 
 ## 技術構成の概要
@@ -338,7 +338,7 @@ _Cloud Logging のログの一部_
 
 ## まとめ
 
-![firebase-architecture](/images//flutter-firebase-modern-architecture/firebase-architecture.png)
+![firebase-architecture](/images/flutter-firebase-modern-architecture/firebase-architecture.png)
 
 - Firebase プロジェクトを作成すると、全く同じプロジェクト名で Google Cloud プロジェクトも作成される
 - GitHub Actions -> Google Cloud や Firebase へのセキュアなアクセスの方法として Workload Identity 連携を活用する
