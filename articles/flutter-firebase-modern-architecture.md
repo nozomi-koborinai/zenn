@@ -35,7 +35,7 @@ published: false
 
 Flutter × Firebase アプリ開発におけるアプリケーション全体としてのアーキテクチャ（以下、アプリケーションアーキテクチャ）を下記に示します。
 
-![firebase-architecture](/images//flutter-firebase-modern-architecture/firebase-architecture.png)
+![firebase-architecture](/images//flutter-firebase-modern-architecture/architecture.png)
 _現在開発中の Flutter アプリにおけるアーキテクチャの全体像_
 
 ## 技術構成の概要
