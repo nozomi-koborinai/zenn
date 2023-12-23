@@ -1,5 +1,5 @@
 ---
-title: "【Flutter × GoFデザインパターン】Commandを実装してみた"
+title: "【Flutter × GoFデザインパターン】Command を実装してみた"
 emoji: "🕹️"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["Flutter", "Dart", "デザインパターン", "command"]
