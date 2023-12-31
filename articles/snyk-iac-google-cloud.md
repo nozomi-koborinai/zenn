@@ -427,7 +427,7 @@ Snyk は個人的に興味のあるプロダクトの 1 つなので今後さら
 最後まで読んでいただきありがとうございました！
 
 なお、本記事で紹介した Snyk IaC は、モバイルアプリ開発にも活用しているので興味のある方は下記の記事も読んでいただけると嬉しいです。
-@card[https://zenn.dev/nozomi_cobo/articles/flutter-firebase-modern-architecture]
+@[card](https://zenn.dev/nozomi_cobo/articles/flutter-firebase-modern-architecture)
 
 ## サンプルコード
 
