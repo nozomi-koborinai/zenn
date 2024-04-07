@@ -40,34 +40,36 @@ _現在開発中の Flutter アプリにおけるアーキテクチャの全体�
 
 ## 技術構成の概要
 
-- コード管理
+- VCS
   - GitHub
 - CI / CD
   - GitHub Actions
-- フロントエンド
+- Frontend
   - Flutter
-- バックエンド
+- Backend
   - Firebase
-- インフラストラクチャ
+- Infrastructure
   - Google Cloud
 - IaC (Infrastructure as Code)
   - Terraform
 - 脆弱性管理
   - Snyk
 
-### コード管理
+### VCS
 
-@[card](https://github.com/orgs/Mood-Trend/repositories)
+@[card](https://github.com/Mood-Trend)
 
 下記 4 リポジトリで構成されています。
 
-- フロントエンド
+- Frontend
   - Flutter アプリのコード
-- バックエンド
-  - Firebase Functions のコード
+- Backend
+  - Firebase
+    - Firebase Functions に関するコード
+    - Firebase Hosting に関する静的ファイル
 - IaC (Infrastructure as Code)
   - Firebase / Google Cloud のリソース状態を Terraform にて管理するコード
-  - Cloud Firestore の Security Rules もこちらで管理している
+  - Cloud Firestore の Security Rules や Clous Storage for Firebase の Security Rules、Firestore のマスタドキュメントデータなどもこちらで管理している
 - 脆弱性管理
   - Firebase / Google Cloud の実リソースとコード状態の差分を検知するためのコード
 
@@ -101,11 +103,15 @@ flowchart TD
     - Terraform フォーマットチェック、実行計画
 - `main` ブランチマージ時
   - 開発環境に対する CD 実行
-    - Firebase Functions デプロイ
+    - Firebase デプロイ
+      - Firebase Functions
+      - Firebase Hosting
     - Terraform 適用
 - `tag` 付与時
   - 本番環境に対する CD 実行
-    - Firebase Functions デプロイ
+    - Firebase デプロイ
+      - Firebase Functions
+      - Firebase Hosting
     - Terraform 適用
 
 #### Workload Identity 連携の活用
@@ -163,27 +169,39 @@ jobs:
 
 :::
 
-### フロントエンド / バックエンド
+### Frontend / Backend
 
-こちらはとてもシンプルな構成となっています。
+こちらは比較的シンプルな構成となっています。
 
 ![frontend-backend](/images/flutter-firebase-modern-architecture/front_back.png)
-_モバイルフロント: Flutter, バックエンド: Firebase_
+_Mobile Frontend: Flutter, Backend: Firebase_
 
 #### Flutter
 
-##### フロントエンドアーキテクチャ
+##### Frontend Architecture
 
-![flutter-architecture](/images/flutter-firebase-modern-architecture/flutter-architecture.png)
-_MVC をベースとした 3 層レイヤードアーキテクチャ_
+![flutter-architecture](/images/flutter-firebase-modern-architecture/frontend_architecture.png)
+_MVC をベースとした 4 層レイヤードアーキテクチャ_
 
-比較的シンプルな機能なので 3 層で十分かと思っていましたが、やはり Presentation 層内のイベントハンドラが肥大化しつつあるので、Application 層 を別途定義しようかなとも思っています。
+以下のルールに則っています。
 
-ですが、一旦リリースまではこのままでいこうと思います。
+1. Presentation Layer には View に関するコードを記載する。
+   直接 Firebase の各種 API をコールするようなコードを記載してはいけない。
+   Firebase 側の処理を実行したい場合は、Application Layer の Usecase クラスのメソッドをコールする。
+1. Application Layer には Presentation Layer（View）と Firebase の橋渡しとなるコードを記載する。
+1. Domain Layer にはビジネスロジックとエンティティを記載する。
+1. Infrastructure Layer には具体的なデータの取得や保存の実装を行う。
+   例えば、Firebase, API エンドポイント, データベースなどとの通信や操作をこのレイヤーで行う。
+   直接 View 側のコードから呼ばれることはない。
+
+##### Flutter におけるレイヤードアーキテクチャの詳細はこちらから
+
+別記事にて執筆しています。
+@[card](https://zenn.dev/flutteruniv/books/flutter-architecture/viewer/5_layered-architecture)
 
 #### Firebase
 
-下記 3 プロダクトのみで構成されています。
+下記 4 プロダクトのみで構成されています。
 
 ##### Firebase Authentication
 
@@ -242,7 +260,7 @@ erDiagram
 
 :::
 
-##### Cloud Functions
+##### Cloud Functions for Firebase
 
 アプリユーザーの追加 / 削除によって起動する関数を定義しています。
 
@@ -251,10 +269,18 @@ erDiagram
 - 削除時
   - 該当ユーザーに紐づく Firesotre 上のアプリデータ削除
 
-### インフラストラクチャ / IaC (Infrastructure as Code)
+##### Firebase Hosting
+
+静的なコンテンツを配信しています。
+
+- [LP](https://mood-trend-prod.web.app/)
+- [プライバシーポリシー](https://mood-trend-prod.web.app/privacy-policy.html)
+- [利用規約](https://mood-trend-prod.web.app/term-of-service.html)
+
+### Infrastructure / IaC (Infrastructure as Code)
 
 ![iac](/images/flutter-firebase-modern-architecture/iac.png)
-_Terraform によって Google Cloud と Firebase 環境をコード管理するイメージ_
+_Terraform によって Google Cloud と Firebase 環境をコードで管理_
 
 直接コンソール上から値を変更できるのは、便利ではありますが、意図しない変更によりエラーを招いてしまう可能性があります。
 
@@ -276,23 +302,70 @@ Firebase での環境構築をイメージすると、必要な環境分コン�
 
 これらをコードで共通化することで、どの環境にも一貫性を持った状態で適用することができます。
 
-```hcl:IAM 関連のコード共通化例
-resource "google_project_iam_member" "owner_cobo" {
-  project = var.project_id
-  role    = "roles/owner"
-  member  = "user:${var.gcp_principal_cobo}"
+下記は、Cloud Firestore のリソースを dev / prod で共通管理する際のコード例です。
+これによって、初期コレクション／ドキュメントのデータソースを 1 箇所に集約することができるので、コンソールからの入力ミスなどによる環境差分は発生しなくなります。
+
+```hcl:Firestore リソースのコード共通化例
+locals {
+  # Firestore master data
+  docs = [
+    {
+      collection  = "app_confs"
+      document_id = "is_show_review_menu"
+      fields = jsonencode({
+        "value" = {
+          "booleanValue" = false
+        },
+      })
+    },
+    {
+      collection  = "app_confs"
+      document_id = "review_url_ios"
+      fields = jsonencode({
+        "value" = {
+          "stringValue" = " "
+        },
+      })
+    },
+    {
+      collection  = "app_confs"
+      document_id = "review_url_android"
+      fields = jsonencode({
+        "value" = {
+          "stringValue" = " "
+        },
+      })
+    },
+  ]
 }
 
-resource "google_project_iam_member" "snyk_scan_cloudasset_editor" {
-  project = var.project_id
-  role    = "roles/cloudasset.viewer"
-  member  = "serviceAccount:snyk-scan@${var.project_id}.iam.gserviceaccount.com"
+# Firebase Firestore Instance
+resource "google_firestore_database" "default" {
+  project                     = var.project_id
+  name                        = "(default)"
+  location_id                 = local.region
+  type                        = "FIRESTORE_NATIVE"
+  concurrency_mode            = "OPTIMISTIC"
+  app_engine_integration_mode = "DISABLED"
+
+  depends_on = [
+    google_firebase_project.default,
+    google_project_service.default,
+  ]
 }
 
-resource "google_project_iam_member" "cloud_scheduler_snyk_scan_cloudbuild_builds_builder" {
-  project = var.project_id
-  role    = "roles/cloudbuild.builds.builder"
-  member  = "serviceAccount:cloud-scheduler-snyk-scan@${var.project_id}.iam.gserviceaccount.com"
+# Firebase Firestore コレクション／ドキュメント定義
+resource "google_firestore_document" "docs" {
+  for_each    = { for doc in local.docs : doc.document_id => doc }
+  provider    = google-beta
+  project     = var.project_id
+  collection  = each.value.collection
+  document_id = each.value.document_id
+  fields      = each.value.fields
+
+  depends_on = [
+    google_firestore_database.default,
+  ]
 }
 ```
 
